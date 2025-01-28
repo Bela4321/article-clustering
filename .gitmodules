@@ -1,0 +1,3 @@
+[submodule "embeddings/ARL_Adv"]
+	path = embeddings/ARL_Adv
+	url = https://github.com/Bela4321/ARL-Adv.git
