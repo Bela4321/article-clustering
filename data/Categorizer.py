@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Optional, Any
 
+import numpy as np
 
 
 class Categorizer():
@@ -45,3 +46,45 @@ class Categorizer():
             if numerical_label == label:
                 return label_str
         return "Unknown label"
+
+    def reduce_to_single_label(self, labels: List[List[int]]) -> Optional[np.ndarray[Any, np.dtype[Any]]]:
+        """
+        Reduce a list of lists of labels to a single list of labels. For every entry, select the label that occurs most often.
+
+        Args:
+            labels: List of lists of labels.
+
+        Returns:
+            List of labels.
+        """
+        label_frequency = {}
+        for label_list in labels:
+            if isinstance(label_list, int):
+                return np.array(labels)
+            for label in label_list:
+                label_frequency[label] = label_frequency.get(label, 0) + 1
+        single_labels = []
+        for label_list in labels:
+            single_label = max(label_list, key=lambda x: label_frequency[x])
+            single_labels.append(single_label)
+        return np.array(single_labels)
+
+    def fit_lables(self, categories):
+        """
+        Fit the categorizer to the given labels.
+
+        Args:
+            categories: List of category labels (strings).
+
+        Returns:
+            None
+        """
+        numericalize_categories = []
+        for label_str in categories:
+            if self.use_parent_categories:
+                label_str = label_str.split(".")[0]
+            if label_str not in self.label_dict:
+                self.label_dict[label_str] = self.unique_labels
+                self.unique_labels += 1
+            numericalize_categories.append(self.label_dict[label_str])
+        return numericalize_categories

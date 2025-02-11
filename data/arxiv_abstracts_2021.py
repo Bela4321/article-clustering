@@ -2,6 +2,7 @@ import os
 import pickle
 from typing import List
 
+import pandas as pd
 
 from data.Categorizer import Categorizer
 
@@ -20,13 +21,13 @@ def data_from_only_n_topics(data, n, limit):
 
 
 
-def load_arxiv_abstracts_2021(categorizer:Categorizer,querry=None,limit=1000) -> (List[str], List[List[int]]):
+def load_with_querry(categorizer:Categorizer, querry=None, limit=1000) -> (List[str], List[List[int]]):
     with open(f"data/arxiv-abstracts-2021/pickle.pkl", "rb") as f:
         data = pickle.load(f)
         # cut data via querry
         #data = data_from_only_n_topics(data,2, limit)
         if querry:
-            data = data.query(querry)[:limit]
+            data = data.query(f"abstract.str.contains('{querry}')")[:limit]
         else:
             data = data[:limit]
         # string-concatenation of title and abstract
@@ -36,15 +37,25 @@ def load_arxiv_abstracts_2021(categorizer:Categorizer,querry=None,limit=1000) ->
 
         return content_data, numerical_catrgories
 
-def load_2_querries(categorizer:Categorizer,querry1,querry2,limit=1000) -> (List[str], List[List[int]]):
+
+def load_n_querries(categorizer:Categorizer, querries:List, limit=1000) -> (List[str], List[List[int]]):
+    '''
+    Load data for each querry and return the combined data, the querry keywords are assigned as categories
+    :param categorizer:
+    :param querries:
+    :param limit:
+    :return:
+    '''
     with open(f"data/arxiv-abstracts-2021/pickle.pkl", "rb") as f:
         data = pickle.load(f)
-        data = data.query(querry1)[:limit]
-        data2 = data.query(querry2)[:limit]
-        data = data.append(data2)
+        data_df = pd.DataFrame()
+        for querry in querries:
+            querry_data = data.query(f"abstract.str.contains('{querry}')")[:limit]
+            querry_data["categories"] = querry
+            data_df = pd.concat([data_df,querry_data])
         # string-concatenation of title and abstract
-        content_data = data["title"] + " " + data["abstract"]
-        categories = [category[0].split() for category in data["categories"]]
-        numerical_catrgories = categorizer.fit_mulitlables(categories)
+        content_data = data_df["title"] + " " + data_df["abstract"]
+        categories = [category for category in data_df["categories"]]
+        numerical_catrgories = categorizer.fit_lables(categories)
 
         return content_data, numerical_catrgories

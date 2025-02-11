@@ -3,10 +3,9 @@ import umap
 from matplotlib import pyplot as plt
 
 from data.Categorizer import Categorizer
-from vizualization.viz_utils import reduce_to_single_label
 
 
-def plot_in_2d(embedding, categorzier:Categorizer, labels=None, needs_reduction=False):
+def plot_in_2d(embedding, categorzier:Categorizer, labels=None):
     """
     Reduces the dimensionality of embeddings to 2D using UMAP and visualizes them.
 
@@ -21,12 +20,9 @@ def plot_in_2d(embedding, categorzier:Categorizer, labels=None, needs_reduction=
         :param labels: labels for each embedding
         :param needs_reduction: if True, reduce multiple labels to single labels
     """
-    # if multiple labels are given, reduce to single labels
-    if needs_reduction:
-        labels = reduce_to_single_label(labels)
 
 
-    reducer = umap.UMAP(n_neighbors=10, min_dist=0.1, n_components=2, random_state=42)
+    reducer = umap.UMAP(n_neighbors=25, min_dist=0., n_components=2,metric='cosine', random_state=42)
 
     # Reduce dimensionality
     reduced_embedding = reducer.fit_transform(embedding)
@@ -52,3 +48,26 @@ def plot_in_2d(embedding, categorzier:Categorizer, labels=None, needs_reduction=
     plt.ylabel("Dimension 2")
     plt.show()
 
+def plot_fitting_mapping(embedding, categotizer, assigned_lables, true_labels):
+    """
+
+    :param embedding: Embedding matrix of the documents
+    :param assigned_lables: Cluster labels assigned by the clustering algorithm
+    :param true_labels: True labels of the documents (mulitlabels)
+    :param categotizer: Categorizer object containing the label names
+
+    As there are typlically more true labels than cluster labels, some true lables should be merged together.
+    """
+
+    reduced_labels = np.zeros(len(true_labels))
+    mergeMap = {}
+    for true_label in set(true_labels):
+        cluster = np.argmax(np.bincount(assigned_lables[true_labels == true_label]))
+        reduced_labels[true_labels == true_label] = cluster
+        if cluster not in mergeMap:
+            mergeMap[cluster] = []
+        mergeMap[cluster].append(true_label)
+
+
+
+    plot_in_2d(embedding, categotizer, reduced_labels)
