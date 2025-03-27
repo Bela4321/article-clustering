@@ -32,6 +32,19 @@ class Categorizer():
             numericalize_categories.append(numerical_label_list)
         return numericalize_categories
 
+    def get_labels_str(self, labels):
+        """
+        Get the string representation of a list of labels.
+
+        Args:
+            labels: List of labels.
+
+        Returns:
+            List of string representations of the labels.
+        """
+        return [self.get_label_str(label) for label in labels]
+
+
     def get_label_str(self, label):
         """
         Get the string representation of a label.
