@@ -6,7 +6,7 @@ from embeddings.ARL_Adv.arl import ARL
 
 
 class ARL_WRAPPER:
-    def __init__(self, corpus, emb_dim=50, num_clusters=5, neg_num=2, lr=1e-3, epochs=3):
+    def __init__(self, corpus, emb_dim=512, num_clusters=5, neg_num=2, lr=1e-3, epochs=3):
         self.ARL = None
         self.corpus = corpus
         self.tokenized_corpus = None
@@ -37,10 +37,6 @@ class ARL_WRAPPER:
         self.ARL.build(w_embed_init.astype(np.float32), c_embed_init.astype(np.float32))
         self.session.run(tf.compat.v1.global_variables_initializer())
 
-
-
-
-
     def tokenize_corpus(corpus, pretrained_model="allenai/scibert_scivocab_uncased"):
         """
         Tokenize the given corpus using a pre-trained model.
@@ -52,3 +48,5 @@ class ARL_WRAPPER:
         tokenized = tokenizer(corpus, padding=True, truncation=True, return_tensors="pt")
         vocab_size = tokenizer.vocab_size
         return tokenized, vocab_size
+
+

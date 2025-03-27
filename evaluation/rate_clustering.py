@@ -14,7 +14,7 @@ def sort_confusion_matrix(confusion_matrix):
     :param confusion_matrix:
     :return:
     """
-    min_dim = min(confusion_matrix.shape)
+    min_dim = min(confusion_matrix.shape )
     for i in range(min_dim):
         # find the maximum value in matrix and move it to (i,i)
         max_value = np.max(confusion_matrix[i:, i:])

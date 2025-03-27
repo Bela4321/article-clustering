@@ -1,3 +1,4 @@
+import pickle
 import time
 from typing import List, Union
 
@@ -88,10 +89,24 @@ class SequentialClustering:
         print(f"Visualization completed. Time taken: {time.time() - start_time:.2f} seconds.")
 
 
-        print("Visualizing actual categories...")
+        print("Visualizing merged categories...")
         start_time = time.time()
         if self.visualization_method_2 is not None:
             self.visualization_method_2(self.embeddings, self.categorizer, self.assigned_labels, self.true_single_labels)
         else:
             self.visualization_method_1(self.embeddings, self.categorizer, self.true_single_labels)
+        print(f"Visualization of merged categories completed. Time taken: {time.time() - start_time:.2f} seconds.")
+
+        # Visualize actual clustering
+        print("Visualizing actual categories...")
+        start_time = time.time()
+        self.visualization_method_1(self.embeddings, self.categorizer, self.true_single_labels)
         print(f"Visualization of actual categories completed. Time taken: {time.time() - start_time:.2f} seconds.")
+
+        # save clustering to pickle
+        print("Saving clustering to pickle...")
+        start_time = time.time()
+        with open("clustering.pkl", "wb") as f:
+            pickle.dump(self, f)
+        print(f"Clustering saved. Time taken: {time.time() - start_time:.2f} seconds.")
+        print("Pipeline completed.")

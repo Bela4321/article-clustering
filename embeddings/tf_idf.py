@@ -39,3 +39,19 @@ def get_embedding(corpus: List[str]) -> tuple[Any, None]:
     return tfidf.toarray(), None
 
 
+def get_embedding_pca(corpus: List[str]) -> Tuple[np.ndarray, None]:
+    """
+    Create a TF-IDF matrix from a term-document matrix and apply PCA to reduce to 100 dimensions.
+
+    Args:
+        term_document: Term-document matrix.
+
+    Returns:
+        TF-IDF matrix.
+    """
+    embedding, _ = get_embedding(corpus)
+    from sklearn.decomposition import PCA
+    dimensions = min(embedding.shape[0],embedding.shape[1], 100)
+    print(dimensions)
+    pca = PCA(n_components=dimensions)
+    return pca.fit_transform(embedding), None
