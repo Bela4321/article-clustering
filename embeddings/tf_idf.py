@@ -3,6 +3,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 import numpy as np
+from umap import UMAP
 
 from embeddings.embedding_utils import clean_and_stem
 
@@ -55,3 +56,11 @@ def get_embedding_pca(corpus: List[str]) -> Tuple[np.ndarray, None]:
     print(dimensions)
     pca = PCA(n_components=dimensions)
     return pca.fit_transform(embedding), None
+
+def get_embedding_UMAP(corpus):
+    embedding, _ = get_embedding(corpus)
+    from sklearn.decomposition import PCA
+    dimensions = min(embedding.shape[0]-2, embedding.shape[1]-2, 100)
+    print(dimensions)
+    umap = UMAP(n_components=dimensions)
+    return umap.fit_transform(embedding), None

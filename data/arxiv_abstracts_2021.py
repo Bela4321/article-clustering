@@ -61,6 +61,25 @@ def load_with_querry(categorizer:Categorizer, querry=None, limit=1000) -> (List[
 
         return content_data, numerical_catrgories
 
+def load_with_querry_inner_folder(categorizer:Categorizer, querry=None, limit=1000) -> (List[str], List[List[int]]):
+    with open(f"../data/arxiv-abstracts-2021/pickle.pkl", "rb") as f:
+        data = pickle.load(f)
+        # cut data via querry
+        #data = data_from_only_n_topics(data,2, limit)
+        if querry:
+            if limit:
+                data = data.query(f"abstract.str.contains('{querry}', case=False)")[:limit]
+            else:
+                data = data.query(f"abstract.str.contains('{querry}', case=False)")
+        else:
+            data = data[:limit]
+        # string-concatenation of title and abstract
+        content_data = data["title"] + "\n" + data["abstract"]
+        categories = [category[0].split() for category in data["categories"]]
+        numerical_catrgories = categorizer.fit_mulitlables(categories)
+
+        return content_data, numerical_catrgories
+
 
 def load_n_querries(categorizer:Categorizer, querries:List, limit=100) -> (List[str], List[List[int]]):
     '''

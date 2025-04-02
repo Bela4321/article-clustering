@@ -4,7 +4,7 @@ from typing import List, Tuple
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import normalize
-from clustering.kmeans import xmeans_clustering
+from clustering.clusterings import xmeans_clustering
 import umap
 from pyclustering.cluster.xmeans import xmeans
 from sklearn.cluster import KMeans
@@ -59,33 +59,9 @@ def get_embedding(corpus: List[str]) -> Tuple[np.ndarray, None]:
 
 
 
-    # reduce keyword_embedding
-    print("reduce dimensions of Keyword Embedding")
-    umap_model = umap.UMAP(
-        n_components=30)
-    reduced_keyword_embedding = umap_model.fit_transform(keyword_embeddings)
-    print("Keyword Embeddings reduced.")
-
-    print("Clustering with kmeans")
-    k=100
-    kmeans = KMeans(n_clusters=k).fit(reduced_keyword_embedding)
-    keyword_labels = np.array(kmeans.labels_, dtype=int)
-
-
-    print("Clustering with xmeans...")
-    k_start = min(4, reduced_keyword_embedding.shape[0])
-    initial_centers = reduced_keyword_embedding[
-        np.random.choice(reduced_keyword_embedding.shape[0], k_start, replace=False)]
-    xmeans_instance = xmeans(reduced_keyword_embedding, initial_centers, kmax=25)
-    xmeans_instance.process()
-
-    keyword_labels = np.zeros(len(reduced_keyword_embedding), dtype=int)  # Assign cluster labels
-    for cluster_idx, cluster in enumerate(xmeans_instance.get_clusters()):
-        for idx in cluster:
-            keyword_labels[idx] = cluster_idx
-
-    keyword_cluster_centers = [np.mean(keyword_embeddings[np.array(keyword_labels) == lab], axis=0) for lab in range(max(keyword_labels) + 1)]
-    print("Clustering with xmeans complete")
+    print("Clustering with xmeans")
+    keyword_labels, keyword_cluster_centers = keyword_xmeans(keyword_embeddings)
+    print("Clustering with kmeans complete")
 
     document_embeddings = []
 
@@ -132,3 +108,18 @@ def cosine_cached(key, cluster_center, word_embedding):
 
 
 
+def keyword_xmeans(data_matrix):
+    k_start = 10
+    if data_matrix.shape[0] < k_start:
+        return np.zeros(data_matrix.shape[0]), np.mean(data_matrix)
+    initial_centers = data_matrix[np.random.choice(data_matrix.shape[0], k_start, replace=False)]
+    xmeans_instance = xmeans(data_matrix, initial_centers, kmax=30)
+    xmeans_instance.process()
+
+    labels = np.zeros(len(data_matrix), dtype=int)  # Assign cluster labels
+    for cluster_idx, cluster in enumerate(xmeans_instance.get_clusters()):
+        for idx in cluster:
+            labels[idx] = cluster_idx
+
+    centroids = xmeans_instance.get_centers()
+    return np.array(labels), np.array(centroids)

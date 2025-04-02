@@ -30,38 +30,6 @@ def sort_confusion_matrix(confusion_matrix):
     return confusion_matrix
 
 
-def plot_confusion_matrix(assigned_labels, true_labels):
-    """
-    Plot a confusion matrix.
-
-    Args:
-        :param true_labels:
-        :param assigned_labels:
-    """
-
-    # Get the number of clusters
-    n_clusters = len(set(assigned_labels))
-    # Get the number of labels
-    n_labels = len(set(true_labels))
-
-    map_true_label_to_position = {label: i for i, label in enumerate(set(true_labels))}
-
-
-    confusion_matrix = np.zeros((n_clusters, n_labels))
-
-    for i, cluster in enumerate(assigned_labels):
-        confusion_matrix[cluster, map_true_label_to_position[true_labels[i]]] += 1
-
-    #sort the confusion matrix, so diagonal is the highest
-    confusion_matrix = sort_confusion_matrix(confusion_matrix)
-
-    plt.imshow(confusion_matrix, cmap='viridis')
-
-    plt.colorbar()
-    plt.xlabel('True label')
-    plt.ylabel('Cluster')
-    plt.show()
-
 def internal_evaluation(embeddings, assigned_labels):
     """
     :arg embeddings: Embedding matrix of the documents
@@ -78,6 +46,7 @@ def internal_evaluation(embeddings, assigned_labels):
     # Calinski-Harabasz score
     calinski_harabasz = calinski_harabasz_score(embeddings, assigned_labels)
     print(f"Calinski-Harabasz score: {calinski_harabasz}")
+    return silhouette, davies_bouldin, calinski_harabasz
 
 
 def external_evaluation(assigned_labels, true_labels):
@@ -85,19 +54,7 @@ def external_evaluation(assigned_labels, true_labels):
     :arg assigned_labels: Cluster labels assigned by the clustering algorithm
     :arg true_labels: True labels of the documents
     """
-    # Adjusted Rand index
-    adjusted_rand = adjusted_rand_score(true_labels, assigned_labels)
-    print(f"Adjusted Rand index: {adjusted_rand}")
-
-    # Normalized mutual information
-    nmi = normalized_mutual_info_score(true_labels, assigned_labels)
-    print(f"Normalized mutual information: {nmi}")
-
-    # Homogeneity, completeness, V-measure
-    homogeneity, completeness, v_measure = homogeneity_completeness_v_measure(true_labels, assigned_labels)
-    print(f"Homogeneity: {homogeneity}")
-    print(f"Completeness: {completeness}")
-    print(f"V-measure: {v_measure}")
+    confusion_matrix
 
 
 

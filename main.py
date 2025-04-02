@@ -1,7 +1,7 @@
 import sys
 
 from SequentialClustering import SequentialClustering
-from clustering.kmeans import kmeans
+from clustering.clusterings import kmeans
 from data.arxiv_abstracts_2021 import load_with_querry
 from data.arxiv_abstracts_2021 import load_n_querries
 from embeddings.bert import get_embedding as bert

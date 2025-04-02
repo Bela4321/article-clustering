@@ -347,3 +347,17 @@ alias_map["supr-con"] = "cond-mat.supr-con"
 
 def to_full_name(abbr: str) -> str:
     return full_name_translator.get(alias_map.get(abbr, abbr))
+
+
+def get_queries():
+    return {
+        "Computer Science and AI": ["Transformer models", "Federated learning", "Quantum computing", "Explainable AI",
+                                    "Graph neural networks"],
+        "Physics and Engineering": ["Topological insulators", "Optical metamaterials", "Fission", "Soft robotics",
+                                    "Health monitoring"],
+        "Biology and Medicine": ["CRISPR", "Microbiome", "DNA sequencing", "Synthetic biology", "Drug delivery"],
+        "Earth and Environmental Science": ["Climate model", "Remote sensing", "Greenhouse gas", "Biodiversity",
+                                            "Light pollution"]
+    }
+def get_query_key(category, query):
+    return (category[:5] + "_" + query[:10]).replace(" ", "_")
