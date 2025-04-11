@@ -4,17 +4,21 @@ import os
 from embeddings.embedding_utils import get_queries
 from vizualization.viz_umap import plot_in_2d
 from clustering.clusterings import kmeans_with_estimated_k,xmeans_clustering, hdbscan_clustering, agglomerative_clustering_with_estimated_k
-from embeddings.tf_idf import get_embedding_pca,get_embedding_UMAP
+from embeddings.tf_idf import get_embedding_pca
 from embeddings.openai_api import get_embedding as embedding_openai
+from embeddings.fasttext import get_embedding_combined_polling_pca as fasttext_combined_pooling
 
 if __name__ == "__main__":
     data_queries = get_queries()
-    embeddings = [get_embedding_pca,get_embedding_UMAP,embedding_openai]
+    embeddings = [get_embedding_pca,fasttext_combined_pooling,embedding_openai]
+    cluster_algos = [kmeans_with_estimated_k, xmeans_clustering, hdbscan_clustering,
+                     agglomerative_clustering_with_estimated_k]
+    cluster_algos = [hdbscan_clustering]
+
     for embedding in embeddings:
         chosen_embedding = embedding.__module__.split(".")[-1]+"__"+embedding.__name__
         print("\n",chosen_embedding)
         embedding_folder_path = f"embedding_results/{chosen_embedding}/"
-        cluster_algos = [kmeans_with_estimated_k,xmeans_clustering, hdbscan_clustering, agglomerative_clustering_with_estimated_k]
 
         for category, queries in data_queries.items():
             for query in queries:

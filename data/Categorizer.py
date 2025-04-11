@@ -101,3 +101,12 @@ class Categorizer():
                 self.unique_labels += 1
             numericalize_categories.append(self.label_dict[label_str])
         return numericalize_categories
+
+    def fit_singlelabels(self, categories):
+        numerical_label_list = []
+        for label_str in categories:
+            if label_str not in self.label_dict:
+                self.label_dict[label_str] = self.unique_labels
+                self.unique_labels += 1
+            numerical_label_list.append(self.label_dict[label_str])
+        return numerical_label_list

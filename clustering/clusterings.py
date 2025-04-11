@@ -9,6 +9,8 @@ from clustpy.partition.dipmeans import DipMeans
 from sklearn.cluster import AgglomerativeClustering
 from umap import UMAP
 
+from embeddings.embedding_utils import optimal_pca
+
 
 def kmeans(data_matrix: np.array, k)->List[int]:
     kmeans = KMeans(n_clusters=k, random_state=0).fit(data_matrix)
@@ -42,8 +44,8 @@ def hdbscan_clustering(data_matrix: np.array) -> tuple[Any, None]:
     HDBSCAN clustering: Finds clusters with variable densities and automatically determines k.
     """
     #preprpcessing
-    reduced_data_matrix = UMAP(n_components=30).fit_transform(data_matrix)
-    clusterer = HDBSCAN(max_cluster_size=80, min_cluster_size=10,min_samples = 3)
+    reduced_data_matrix = optimal_pca(data_matrix,0.4)
+    clusterer = HDBSCAN(max_cluster_size=80, min_cluster_size=5,min_samples = 1)
     labels = clusterer.fit_predict(reduced_data_matrix)
     return labels.tolist(), None
 

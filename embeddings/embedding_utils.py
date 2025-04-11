@@ -3,12 +3,15 @@ import pickle
 import re
 from typing import List
 
+import numpy as np
 import tqdm
 from nltk import PorterStemmer
 from nltk.corpus import stopwords
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
+from sklearn.decomposition import PCA
+
 
 def get_wordnet_pos(nltk_tag):
     if nltk_tag.startswith('J'):
@@ -361,3 +364,19 @@ def get_queries():
     }
 def get_query_key(category, query):
     return (category[:5] + "_" + query[:10]).replace(" ", "_")
+
+single_plot_color:str = "#9467bd"
+
+
+def optimal_pca(embedding, variance_threshold=0.95):
+    n_samples, n_features = embedding.shape
+    n_components = min(n_samples, n_features)
+
+    pca = PCA(n_components=n_components)
+    pca.fit(embedding)
+    explained_variance_ratio = pca.explained_variance_ratio_
+    cumulative_variance_ratio = np.cumsum(explained_variance_ratio)
+
+    n_components_to_retain = np.argmax(cumulative_variance_ratio >= variance_threshold) + 1
+    pca_final = PCA(n_components=n_components_to_retain)
+    return pca_final.fit_transform(embedding)

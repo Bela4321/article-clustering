@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 from umap import UMAP
 
-from embeddings.embedding_utils import clean_and_stem
+from embeddings.embedding_utils import clean_and_stem, optimal_pca
 
 
 def term_document_matrix(corpus: List[str]) -> np.ndarray:
@@ -51,11 +51,7 @@ def get_embedding_pca(corpus: List[str]) -> Tuple[np.ndarray, None]:
         TF-IDF matrix.
     """
     embedding, _ = get_embedding(corpus)
-    from sklearn.decomposition import PCA
-    dimensions = min(embedding.shape[0],embedding.shape[1], 100)
-    print(dimensions)
-    pca = PCA(n_components=dimensions)
-    return pca.fit_transform(embedding), None
+    return optimal_pca(embedding), None
 
 def get_embedding_UMAP(corpus):
     embedding, _ = get_embedding(corpus)

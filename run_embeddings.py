@@ -1,11 +1,12 @@
 from data.Categorizer import Categorizer
 from data.arxiv_abstracts_2021 import load_with_querry
 from embeddings.embedding_utils import get_queries
-from embeddings.tf_idf import get_embedding_pca as tf_idf_embedding
+from embeddings.tf_idf import get_embedding_pca as tf_idf_embedding_pca
 from embeddings.tf_idf import get_embedding_UMAP as tf_idf_embedding_umap
 from embeddings.fasttext import get_embedding_mean_polling as fasttext_mean_embedding
 from embeddings.fasttext import get_embedding_max_polling as fasttext_max_embedding
 from embeddings.fasttext import get_embedding_combined_polling as fasttext_combined_embedding
+from embeddings.fasttext import get_embedding_combined_polling_pca as fasttext_combined_embedding_pca
 from embeddings.indirect_topics_trough_keyword_clusters import get_embedding as keyword_embedding
 from embeddings.openai_api import get_embedding as openai_embedding
 from tqdm import tqdm
@@ -15,8 +16,8 @@ import pickle
 
 def get_data():
     data_querries = get_queries()
-    #embedding_algos = [tf_idf_embedding, fasttext_mean_embedding, fasttext_max_embedding, fasttext_idf_embedding, keyword_embedding, openai_embedding][:-1]
-    embedding_algos = [keyword_embedding]
+    embedding_algos = [tf_idf_embedding_pca, fasttext_mean_embedding, fasttext_max_embedding, fasttext_combined_embedding_pca, keyword_embedding, openai_embedding]
+    embedding_algos = [tf_idf_embedding_pca]
     data_loader = load_with_querry
     return data_querries, embedding_algos, data_loader
 

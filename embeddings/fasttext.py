@@ -1,7 +1,10 @@
 import io
 import numpy as np
 from typing import List, Tuple
-from embeddings.embedding_utils import clean_and_stem_list
+
+from sklearn.decomposition import PCA
+
+from embeddings.embedding_utils import clean_and_stem_list, optimal_pca
 
 
 def load_vectors(fname: str, word_set: set) -> dict:
@@ -115,6 +118,14 @@ def get_embedding_min_polling(corpus: List[str]) -> Tuple[np.ndarray, None]:
         embeddings.append(document_embedding)
 
     return np.array(embeddings), None
+
+
+
+
+def get_embedding_combined_polling_pca(corpus: List[str]) -> Tuple[np.ndarray, None]:
+    embedding,_ = get_embedding_combined_polling(corpus)
+    embedding = optimal_pca(embedding)
+    return embedding, None
 
 def get_embedding_combined_polling(corpus: List[str]) -> Tuple[np.ndarray, None]:
     """

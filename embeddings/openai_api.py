@@ -19,6 +19,11 @@ def get_embedding(corpus: list[str]) -> [np.array, None]:
     Returns:
         pd.DataFrame: DataFrame with columns 'text' and 'embedding'
     """
+    for i, text in enumerate(corpus):
+        if text is None or len(text) == 0:
+            corpus[i] = "Empty text"
+
+
     # batch responses to 1000 docs each
     k= len(corpus)//1000+1
     corpus_batches = [corpus[low*1000:min((low+1)*1000,len(corpus))] for low in range(k)]
